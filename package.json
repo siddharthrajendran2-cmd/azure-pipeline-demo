@@ -1,0 +1,17 @@
+{
+  "name": "azure-pipeline-demo",
+  "version": "1.0.0",
+  "description": "A demo Node.js app for Azure DevOps CI/CD pipeline",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "build": "echo \"Build step complete\"",
+    "test": "node index.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
+
+
+
