@@ -19,7 +19,21 @@ steps:
   - script: |
       npm run build
     displayName: "Build project"
-    
+
   - script: |
       npm test
     displayName: "Run tests"
+  - task: CopyFiles@2
+    inputs:
+      sourceFolder: "$(Build.SourcesDirectory)"
+      contents: |
+        index.js
+        package.json
+      targetFolder: "$(Build.ArtifactStagingDirectory)"
+    displayName: "Copy project files"
+
+  - task: PublishPipelineArtifact@1
+    inputs:
+      artifactName: "nodejs-app"
+      targetPath: "$(Build.ArtifactStagingDirectory)"
+    displayName: "Publish pipeline artifact"
