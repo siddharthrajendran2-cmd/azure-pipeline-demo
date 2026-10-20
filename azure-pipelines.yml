@@ -5,37 +5,63 @@ trigger:
   paths:
     exclude:
       - "*.md"
-pool:
-  vmImage: "ubuntu-latest"
 
-steps:
-  - task: UseNode@1
-    inputs:
-      version: "18.x"
-    displayName: "Install Node.js"
+stages:
+  - stage: Build
+    displayName: "Build Stage"
+    jobs:
+      - job: BuildJob
+        displayName: "Build and Test"
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - task: UseNode@1
+            inputs:
+              version: "18.x"
+            displayName: "Install Node.js"
 
-  - script: |
-      npm install
-    displayName: "Install dependencies"
+          - script: |
+              npm install
+            displayName: "Install dependencies"
 
-  - script: |
-      npm run build
-    displayName: "Build project"
+          - script: |
+              npm run build
+            displayName: "Build project"
 
-  - script: |
-      npm test
-    displayName: "Run tests"
-  - task: CopyFiles@2
-    inputs:
-      sourceFolder: "$(Build.SourcesDirectory)"
-      contents: |
-        index.js
-        package.json
-      targetFolder: "$(Build.ArtifactStagingDirectory)"
-    displayName: "Copy project files"
+          - script: |
+              npm test
+            displayName: "Run tests"
 
-  - task: PublishPipelineArtifact@1
-    inputs:
-      artifactName: "nodejs-app"
-      targetPath: "$(Build.ArtifactStagingDirectory)"
-    displayName: "Publish pipeline artifact"
+          - task: CopyFiles@2
+            inputs:
+              sourceFolder: "$(Build.SourcesDirectory)"
+              contents: |
+                index.js
+                package.json
+              targetFolder: "$(Build.ArtifactStagingDirectory)"
+            displayName: "Copy project files"
+
+          - task: PublishPipelineArtifact@1
+            inputs:
+              artifactName: "nodejs-app"
+              targetPath: "$(Build.ArtifactStagingDirectory)"
+            displayName: "Publish pipeline artifact"
+
+  - stage: Deploy
+    displayName: "Deploy Stage"
+    dependsOn: Build
+    jobs:
+      - deployment: DeployJob
+        displayName: "Deploy to Dev"
+        environment: "dev"
+        pool:
+          vmImage: "ubuntu-latest"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: |
+                    echo "Deploying nodejs-app artifact to dev environment..."
+                    echo "Artifact contents:"
+                    ls -la $(Pipeline.Workspace)/nodejs-app/
+                  displayName: "Deploy to dev environment"
