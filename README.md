@@ -1,1 +1,1 @@
-# azure-pipeline-demo
+[![Build Status](https://dev.azure.com/sidhu1406/PipelineDemo/_apis/build/status%2Fsiddharthrajendran2-cmd.azure-pipeline-demo?branchName=main)](https://dev.azure.com/sidhu1406/PipelineDemo/_build/latest?definitionId=1&branchName=main)
