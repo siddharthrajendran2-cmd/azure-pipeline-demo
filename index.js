@@ -8,4 +8,4 @@ function add(a, b) {
 
 module.exports = { greet, add };
 
-console.log(greet("World"));
+console.log(greet("pipeline"));
